@@ -33,3 +33,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.zip
+
+# Server-only credentials must never enter the mobile bundle.
+*firebase-adminsdk*.json
+*service-account*.json

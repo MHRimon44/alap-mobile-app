@@ -10,6 +10,7 @@ import { Screen } from '../../components/Screen/Screen';
 import { useToast } from '../../components/Toast/ToastProvider';
 import type { RootStackParamList } from '../../navigation/types';
 import { useLogoutAllMutation, useLogoutMutation } from '../../services/api/authApi';
+import { unregisterPushDevice } from '../../services/notifications/deviceRegistration';
 import { clearSession } from '../../services/auth/refreshCoordinator';
 import { socketManager } from '../../services/realtime/socketManager';
 import {
@@ -55,6 +56,7 @@ export function SettingsScreen({ navigation }: Props): React.JSX.Element {
 
   const signOut = async (allDevices: boolean): Promise<void> => {
     try {
+      await unregisterPushDevice();
       if (allDevices) await logoutAll().unwrap();
       else await logout().unwrap();
     } catch {

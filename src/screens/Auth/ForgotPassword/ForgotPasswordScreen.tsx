@@ -28,8 +28,7 @@ export function ForgotPasswordScreen({ navigation }: Props): React.JSX.Element {
   const submit = handleSubmit(async (values) => {
     const email = values.email.trim().toLowerCase();
     try {
-      const response = await forgot({ email }).unwrap();
-      console.log('forgot response:', response);
+      await forgot({ email }).unwrap();
       showToast({
         type: 'success',
         title: 'Check your email',
@@ -37,7 +36,6 @@ export function ForgotPasswordScreen({ navigation }: Props): React.JSX.Element {
       });
       navigation.navigate('VerifyResetOtp', { email });
     } catch (error) {
-      console.log('forgot password request failed:', error);
       showToast({ type: 'error', title: 'Request failed', message: authErrorMessage(error) });
     }
   });

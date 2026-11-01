@@ -42,7 +42,6 @@ export function RegisterScreen({ navigation }: Props): React.JSX.Element {
     submitting.current = true;
     try {
       const response = await register(values).unwrap();
-      console.log('register response:', response);
       if ('accessToken' in response) {
         await persistTokenPair(response, dispatch);
         showToast({ type: 'success', title: 'Account created', message: 'Welcome to Alap.' });

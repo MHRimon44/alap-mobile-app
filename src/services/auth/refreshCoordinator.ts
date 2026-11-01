@@ -57,6 +57,9 @@ export async function persistTokenPair(pair: TokenPair, dispatch: AppDispatch): 
 }
 
 export async function clearSession(dispatch: AppDispatch): Promise<void> {
-  await credentialStore.clearRefreshToken();
-  dispatch(signedOut());
+  try {
+    await credentialStore.clearRefreshToken();
+  } finally {
+    dispatch(signedOut());
+  }
 }

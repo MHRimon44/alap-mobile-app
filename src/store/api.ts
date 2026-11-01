@@ -32,7 +32,8 @@ const baseQueryWithRefresh: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
     '/v1/auth/password/forgot',
     '/v1/auth/password/reset',
   ];
-  const canRefresh = !publicAuthRoutes.includes(url);
+  // Optional push endpoints must never invalidate a working session.
+  const canRefresh = !publicAuthRoutes.includes(url) && !url.startsWith('/v1/devices');
   if (result.error?.status === 401 && canRefresh) {
     const pair = await refreshSession(queryApi.dispatch);
     if (pair !== null) result = await rawBaseQuery(args, queryApi, extraOptions);

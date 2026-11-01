@@ -9,6 +9,7 @@ import { Screen } from '../../components/Screen/Screen';
 import { useToast } from '../../components/Toast/ToastProvider';
 import type { RootStackParamList } from '../../navigation/types';
 import { useChangePasswordMutation } from '../../services/api/authApi';
+import { unregisterPushDevice } from '../../services/notifications/deviceRegistration';
 import { clearSession } from '../../services/auth/refreshCoordinator';
 import { useAppDispatch } from '../../store/hooks';
 import { useAppTheme } from '../../theme/ThemeProvider';
@@ -41,6 +42,7 @@ export function ChangePasswordScreen({}: Props): React.JSX.Element {
   const submit = handleSubmit(async ({ currentPassword, newPassword }) => {
     try {
       await changePassword({ currentPassword, newPassword }).unwrap();
+      await unregisterPushDevice();
       await clearSession(dispatch);
       showToast({
         type: 'success',

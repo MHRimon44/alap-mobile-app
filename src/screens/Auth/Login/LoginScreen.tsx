@@ -34,11 +34,9 @@ export function LoginScreen({ navigation }: Props): React.JSX.Element {
   const submit = handleSubmit(async (values) => {
     try {
       const pair = await login(values).unwrap();
-      console.log('Login successful:', pair);
       showToast({ type: 'success', title: 'Welcome back', message: 'Signed in successfully.' });
       await persistTokenPair(pair, dispatch);
     } catch (error) {
-      console.log('Login failed:', error);
       showToast({ type: 'error', title: 'Login failed', message: authErrorMessage(error) });
     }
   });
