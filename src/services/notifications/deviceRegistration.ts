@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { resetPushTokenForLogout } from './tokenPrivacy';
 import { appStore } from '../../store/store';
 import { deviceApi } from '../api/deviceApi';
@@ -30,14 +31,25 @@ export function registerPushToken(token: string): Promise<void> {
       appStore.getState().session.user?.id !== userId
     )
       return;
-    const request = appStore.dispatch(
-      deviceApi.endpoints.registerDevice.initiate({
-        ...metadata,
-        fcmToken: token,
-      }),
-    );
+    const body = { ...metadata, fcmToken: token };
+    if (Platform.OS === 'ios' && __DEV__) {
+      console.log('[FCM][iOS] Device request:', { method: 'POST', path: '/v1/devices', body });
+    }
+    const request = appStore.dispatch(deviceApi.endpoints.registerDevice.initiate(body));
     try {
-      await request.unwrap();
+      const response = await request.unwrap();
+      if (Platform.OS === 'ios' && __DEV__) {
+        console.log('[FCM][iOS] Device response:', response);
+      }
+    } catch (error) {
+      if (Platform.OS === 'ios' && __DEV__) {
+        const status =
+          typeof error === 'object' && error !== null && 'status' in error
+            ? error.status
+            : 'unknown';
+        console.warn('[FCM][iOS] Device request failed:', { status });
+      }
+      throw error;
     } finally {
       request.reset();
     }

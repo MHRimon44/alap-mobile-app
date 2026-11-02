@@ -1,3 +1,4 @@
+jest.mock('react-native', () => ({ Platform: { OS: 'android' } }));
 jest.mock('./tokenPrivacy', () => ({
   resetPushTokenForLogout: jest.fn(),
   ensurePushTokenPrivacy: jest.fn(),

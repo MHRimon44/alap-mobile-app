@@ -32,7 +32,7 @@ export function PushNotificationManager(): null {
 
   // Capture cold-start taps even while session restoration is in progress.
   useEffect(() => {
-    if (Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android' && Platform.OS !== 'ios') return;
     const cleanups: (() => void)[] = [];
     let cancelled = false;
     try {
@@ -61,7 +61,8 @@ export function PushNotificationManager(): null {
   }, []);
 
   useEffect(() => {
-    if (Platform.OS !== 'android' || status !== 'authenticated' || !userId) return;
+    if (status !== 'authenticated' || !userId) return;
+    if (Platform.OS !== 'android' && Platform.OS !== 'ios') return;
     startDeviceRegistration();
     let cancelled = false;
     let permitted = false;
@@ -81,7 +82,9 @@ export function PushNotificationManager(): null {
     try {
       cleanups.push(
         subscribeToTokenRefresh((token) => {
-          if (!cancelled && permitted) void registerPushToken(token);
+          if (cancelled) return;
+          if (permitted) void registerPushToken(token);
+          else void initialize();
         }),
       );
       const subscription = AppState.addEventListener('change', (state) => {

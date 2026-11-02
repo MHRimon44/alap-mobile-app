@@ -42,8 +42,17 @@ export async function getFcmToken(): Promise<string | null> {
       return null;
     }
 
+    if (Platform.OS === 'ios' && __DEV__) {
+      console.log('[FCM][iOS] Token:', token);
+    }
     return token;
-  } catch {
+  } catch (error) {
+    if (Platform.OS === 'ios' && __DEV__) {
+      console.warn(
+        '[FCM][iOS] Token error:',
+        error instanceof Error ? error.message : 'Token unavailable',
+      );
+    }
     console.warn('[FCM] Failed to get token');
     return null;
   }
@@ -54,6 +63,7 @@ export async function initializeNotifications(): Promise<string | null> {
     const granted = await requestNotificationPermission();
 
     if (!granted) {
+      if (Platform.OS === 'ios' && __DEV__) console.log('[FCM][iOS] Permission denied');
       return null;
     }
 
@@ -70,6 +80,7 @@ export function subscribeToTokenRefresh(
   callback: (token: string) => void | Promise<void>,
 ): () => void {
   return onTokenRefresh(getMessaging(), (token) => {
+    if (Platform.OS === 'ios' && __DEV__) console.log('[FCM][iOS] Refreshed token:', token);
     void callback(token);
   });
 }
